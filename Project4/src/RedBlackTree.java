@@ -1,4 +1,3 @@
-//Cristian Avina Lopez
 public class RedBlackTree<K extends Comparable<K>, V> implements Tree<K, V> {
 	public enum Color {
 		RED, BLACK
