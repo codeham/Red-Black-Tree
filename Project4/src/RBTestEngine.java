@@ -16,6 +16,6 @@ public class RBTestEngine {
 		newTree.add(21, null);
 		newTree.add(18, null);
 		newTree.add(25, null);
-		//newTree.printCase();
+		newTree.printCase();
 	}
 }
