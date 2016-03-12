@@ -63,9 +63,9 @@ public class RedBlackTree<K extends Comparable<K>, V> implements Tree<K, V> {
 				if (x.parent == x.parent.parent.left) {
 					Node<K, V> uncle = x.parent.parent.right;
 					if(uncle.currentColor == Color.RED){
-						case1(x, uncle);
-					}else if(x == x.parent.right){
-						//case2(x, uncle);
+						case1(x, uncle); //x's uncle is red
+					}else if(x == x.parent.right){ //Inner Node
+						case2(x);
 					}else{
 						//Uncle is black
 						case3(x); 
@@ -110,17 +110,22 @@ public class RedBlackTree<K extends Comparable<K>, V> implements Tree<K, V> {
 		x = x.parent.parent; // Pointer is moved to grandparent
 	}
 
-	public void case2(Node<K, V> x, Node<K, V> uncle) {
-
-	}
-	
-	public void case3(Node<K, V> x){
+	public void case2(Node<K, V> x) {
+		//Black uncle
 		x = x.parent;
-		//Implement Rotate Left
 		rotateLeft(x);
 		x.parent.currentColor = Color.BLACK;
 		x.parent.parent.currentColor = Color.RED;
-		rotateRight();
+		rotateRight(x);
+	}
+	
+	public void case3(Node<K, V> x){
+		//Black uncle
+		x = x.parent;
+		rotateRight(x);
+		x.parent.currentColor = Color.BLACK;
+		x.parent.parent.currentColor = Color.RED;
+		rotateLeft(x);
 	}
 	
 	/**
@@ -150,7 +155,23 @@ public class RedBlackTree<K extends Comparable<K>, V> implements Tree<K, V> {
 		}
 	}
 
-	public void rotateRight() {
+	public void rotateRight(Node<K, V> x) {
+		Node<K, V> y = x.left;
+		x.left = y.right;
+		if(y.right != null){
+			y.right.parent = x;
+			y.parent = x.parent;
+		}
+		if(x.parent == null){
+			root = y;
+		}else if(x == x.parent.right){
+			x.parent.right = y;
+		}else{
+			x.parent.left = y;
+			y.right = x;
+			x.parent = y;
+		}
+		
 
 	}
 
