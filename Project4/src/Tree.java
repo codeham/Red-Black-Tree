@@ -1,4 +1,10 @@
-//Cristian Avina
+/**
+ * 
+ * @author cristian
+ *
+ * @param <K>
+ * @param <V>
+ */
 public interface Tree<K extends Comparable<K>, V> {
 	public void add(K key, V value);
 	public V remove(K key);

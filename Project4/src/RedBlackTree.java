@@ -1,3 +1,11 @@
+/**
+ * 
+ * @author cristian
+ *
+ * @param <K>
+ * @param <V>
+ */
+
 public class RedBlackTree<K extends Comparable<K>, V> implements Tree<K, V> {
 	public enum Color {
 		RED, BLACK
@@ -48,7 +56,7 @@ public class RedBlackTree<K extends Comparable<K>, V> implements Tree<K, V> {
 			return;
 		} else {
 			x = BSTadd(key, value);
-			//treeFixup(x);
+			treeFixup(x);
 		}
 		// end of method
 	}
@@ -61,18 +69,23 @@ public class RedBlackTree<K extends Comparable<K>, V> implements Tree<K, V> {
 		} else {
 			while (x.parent.currentColor == Color.RED) {
 				if (x.parent == x.parent.parent.left) {
-					Node<K, V> uncle = x.parent.parent.right;
-					if(uncle.currentColor == Color.RED){
-						case1(x, uncle); //x's uncle is red
-					}else if(x == x.parent.right){ //Inner Node
+					Node<K, V> y = x.parent.parent.right;
+					
+					if (y.currentColor == Color.RED) {
+						case1(x, y); // x's uncle is red
+					} else if (x == x.parent.right) { 
+						System.out.println("I Get here");
+						// Inner Right Node & Outer Right Nodes 
 						case2(x);
-					}else{
-						//Uncle is black
-						case3(x); 
-						root.currentColor = Color.BLACK;
+						case3(x);
+					} else {
+						// Uncle is black
+						invertedCase2(x);
+						invertedCase3(x);
 					}
 				}
 			}
+			root.currentColor = Color.BLACK;
 		}
 		// End of method
 	}
@@ -105,50 +118,55 @@ public class RedBlackTree<K extends Comparable<K>, V> implements Tree<K, V> {
 	}
 
 	public void case1(Node<K, V> x, Node<K, V> y) {
-		// Case: Double Red Invariant
 		reColoring(x, y);
 		x = x.parent.parent; // Pointer is moved to grandparent
 	}
 
 	public void case2(Node<K, V> x) {
-		//Black uncle
 		x = x.parent;
 		rotateLeft(x);
+	}
+
+	public void case3(Node<K, V> x) {
 		x.parent.currentColor = Color.BLACK;
 		x.parent.parent.currentColor = Color.RED;
 		rotateRight(x);
 	}
-	
-	public void case3(Node<K, V> x){
-		//Black uncle
+
+	public void invertedCase2(Node<K, V> x) {
 		x = x.parent;
 		rotateRight(x);
+	}
+
+	public void invertedCase3(Node<K, V> x) {
 		x.parent.currentColor = Color.BLACK;
 		x.parent.parent.currentColor = Color.RED;
 		rotateLeft(x);
 	}
-	
+
 	/**
-	 * This left rotation is called when it hits the black uncle case when 
-	 * invariant 4 is broken, how this method works is it sets a pointer to the 
-	 * value being added (pointer y), if we are dealing with case N, it is assumed that there
-	 * is a pointer placed at the parent of pointer x. we then set the subtree connected to the left
-	 * of y to the right pointer of x. 
+	 * This left rotation is called when it hits the black uncle case when
+	 * invariant 4 is broken, how this method works is it sets a pointer to the
+	 * value being added (pointer y), if we are dealing with case N, it is
+	 * assumed that there is a pointer placed at the parent of pointer x. we
+	 * then set the subtree connected to the left of y to the right pointer of
+	 * x.
+	 * 
 	 * @param x
 	 * @param y
 	 */
-	public void rotateLeft(Node<K,V> x) {
+	public void rotateLeft(Node<K, V> x) {
 		Node<K, V> y = x.right;
 		x.right = y.left;
-		if (y.left != null){
+		if (y.left != null) {
 			y.left.parent = x;
 			y.parent = x.parent;
 		}
-		if(x.parent == null){
+		if (x.parent == null) {
 			root = y;
-		}else if(x == x.parent.left){
+		} else if (x == x.parent.left) {
 			x.parent.left = y;
-		}else{
+		} else {
 			x.parent.right = y;
 			y.left = x;
 			x.parent = y;
@@ -158,33 +176,36 @@ public class RedBlackTree<K extends Comparable<K>, V> implements Tree<K, V> {
 	public void rotateRight(Node<K, V> x) {
 		Node<K, V> y = x.left;
 		x.left = y.right;
-		if(y.right != null){
+		if (y.right != null) {
 			y.right.parent = x;
 			y.parent = x.parent;
 		}
-		if(x.parent == null){
+		if (x.parent == null) {
 			root = y;
-		}else if(x == x.parent.right){
+		} else if (x == x.parent.right) {
 			x.parent.right = y;
-		}else{
+		} else {
 			x.parent.left = y;
 			y.right = x;
 			x.parent = y;
 		}
-		
 
 	}
 
 	public void reColoring(Node<K, V> x, Node<K, V> y) {
-		x.parent.currentColor = Color.BLACK; //added node's parent to black, restoring invariant 4
-		y.currentColor = Color.BLACK; //uncle is set to black to restore invariant 5
-		x.parent.parent.currentColor = Color.RED; //grandparent is set to RED
+		x.parent.currentColor = Color.BLACK; // added node's parent to black,
+												// restoring invariant 4
+		y.currentColor = Color.BLACK; // uncle is set to black to restore
+										// invariant 5
+		x.parent.parent.currentColor = Color.RED; // grandparent is set to RED
 
 	}
 
 	public void printCase() {
 		System.out.println(root.key);
 		System.out.println(root.left.key);
+		System.out.println(root.right.key);
+		System.out.println(root.right.right.key);
 	}
 
 	@Override
