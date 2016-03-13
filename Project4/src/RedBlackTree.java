@@ -11,7 +11,7 @@ public class RedBlackTree<K extends Comparable<K>, V> implements Tree<K, V> {
 		RED, BLACK
 	}
 
-//	 Nested Node Class
+	// Nested Node Class
 	private class Node<K, V> {
 		private K key;
 		private V value;
@@ -68,23 +68,20 @@ public class RedBlackTree<K extends Comparable<K>, V> implements Tree<K, V> {
 			return;
 		} else {
 			while (x.parent.currentColor == Color.RED) {
-				if (x.parent == x.parent.parent.left) {
-					Node<K, V> y = x.parent.parent.right;
-
-					if (y.currentColor == Color.RED) {
-						case1(x, y); // x's uncle is red
+				if (x.parent == x.parent.parent.left){ //Parent is on left side of subtree
+					Node<K, V> y = x.parent.parent.right; //uncle on the right side
+					if (y.currentColor == Color.RED){ //Repaint (Case1)
+						case1(x, y);
+					}else if(x == x.parent.right){ //Right side of subtree
+						case2(x);
+						case3(x);
 					}
-				} else if (x == x.parent.right) {
-					// Inner Right Node & Outer Right Nodes
-					case2(x);
-					case3(x);
-				} else {
-					// Uncle is black
+				}else{
 					invertedCase2(x);
 					invertedCase3(x);
 				}
+				root.currentColor = Color.BLACK;
 			}
-			root.currentColor = Color.BLACK;
 		}
 		// End of method
 	}
@@ -127,10 +124,9 @@ public class RedBlackTree<K extends Comparable<K>, V> implements Tree<K, V> {
 	}
 
 	public void case3(Node<K, V> x) {
-		System.out.println("BUG");
 		x.parent.currentColor = Color.BLACK;
 		x.parent.parent.currentColor = Color.RED;
-		rotateRight(x);
+		rotateRight(x.parent.parent); //Grandparent Rotation..
 	}
 
 	public void invertedCase2(Node<K, V> x) {
@@ -141,7 +137,7 @@ public class RedBlackTree<K extends Comparable<K>, V> implements Tree<K, V> {
 	public void invertedCase3(Node<K, V> x) {
 		x.parent.currentColor = Color.BLACK;
 		x.parent.parent.currentColor = Color.RED;
-		rotateLeft(x);
+		rotateLeft(x.parent.parent);
 	}
 
 	/**
@@ -160,36 +156,39 @@ public class RedBlackTree<K extends Comparable<K>, V> implements Tree<K, V> {
 		x.right = y.left;
 		if (y.left != null) {
 			y.left.parent = x;
-			y.parent = x.parent;
 		}
+		
+		y.parent = x.parent;
+		
 		if (x.parent == null) {
 			root = y;
 		} else if (x == x.parent.left) {
 			x.parent.left = y;
 		} else {
 			x.parent.right = y;
-			y.left = x;
-			x.parent = y;
 		}
+		y.left = x;
+		x.parent = y;
 	}
 
 	public void rotateRight(Node<K, V> x) {
-		System.out.println("**Potential BUG HERE**");
 		Node<K, V> y = x.left;
 		x.left = y.right;
 		if (y.right != null) {
 			y.right.parent = x;
-			y.parent = x.parent;
 		}
+		
+		y.parent = x.parent;
+		
 		if (x.parent == null) {
 			root = y;
 		} else if (x == x.parent.right) {
 			x.parent.right = y;
 		} else {
 			x.parent.left = y;
-			y.right = x;
-			x.parent = y;
 		}
+		y.right = x;
+		x.parent = y;
 	}
 
 	public void reColoring(Node<K, V> x, Node<K, V> y) {
@@ -204,17 +203,17 @@ public class RedBlackTree<K extends Comparable<K>, V> implements Tree<K, V> {
 	}
 
 	public void printCase() {
-		//		 Case 1
-		// System.out.println(root.currentColor);
-		// System.out.println(root.left.currentColor);
-		// System.out.println(root.right.currentColor);
-		// System.out.println(root.left.left.currentColor);
+		 //Case 1
+//		 System.out.println(root.currentColor);
+//		 System.out.println(root.left.currentColor);
+//		 System.out.println(root.right.currentColor);
+//		 System.out.println(root.left.left.currentColor);
 
 		// Case 2 && Case 3
-		System.out.println(root.currentColor);
-		System.out.println(root.left.currentColor);
-		System.out.println(root.right.currentColor);
-		System.out.println(root.right.right.currentColor);
+		System.out.println(root.key);
+		System.out.println(root.left.key);
+		System.out.println(root.right.key);
+		System.out.println(root.right.right.key);
 
 	}
 
